@@ -1,0 +1,15 @@
+.door-dp-container {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.door-dp-bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 4px;
+  height: 4px;
+  cursor: se-resize;
+  z-index: 1;
+}

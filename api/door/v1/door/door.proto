@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package carefree.door.door;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "carefree/api/door/v1/door;door_proto";
+
+
+service DoorService {
+  rpc CreateDoor(CreateDoorRequest) returns (Door);  
+  rpc UpdateDoor(UpdateDoorRequest) returns (Door);
+  rpc DeleteDoor(DeleteDoorRequest) returns (google.protobuf.Empty);
+  rpc GetDoor(GetDoorRequest) returns (Door);
+  rpc ListDoors(ListDoorsRequest) returns (ListDoorsResponse);
+}
+
+message BookMark{
+    string title=1;
+    string image=2;
+    string link=3;
+    repeated string lables=4;
+}
+
+message Door{
+    message Group{
+        string title=1;
+        string style =2;
+        bool display=3;
+        repeated BookMark bookmarks=4;
+    }
+    string name =1;
+    string background =3;
+    map<string, Group> groups = 4;
+}
+
+message CreateDoorRequest{
+    string id=1;
+    Door door=2;
+}
+
+message UpdateDoorRequest{
+    string name=1;
+}
+
+message DeleteDoorRequest{
+    string name=1;
+}
+
+message GetDoorRequest{
+    string name=1;
+}
+
+message ListDoorsRequest{}
+
+message ListDoorsResponse{}

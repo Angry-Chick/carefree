@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "carefree/api/user/v1;user_proto";
+
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (User);
+  
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+  
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+
+  rpc GetUser(GetUserRequest) returns (User);
+
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+
+  rpc UpdateUserPassword(UpdateUserPasswordRequest)
+      returns (UpdateUserPasswordResponse);
+}
+
+// 用户结构
+message User {
+  // 资源名称
+  // users/<user_id>
+  string name = 1;
+
+  // 用户名称
+  string display_name = 2;
+
+  // 头像
+  string avatar_url = 3;
+
+  // 用户名
+  //
+  // 可以修改，用于用户登录，无需验证即可登录。
+  string username = 4;
+
+  // 邮箱
+  //
+  // 用于邮箱登录。
+  string email = 5;
+
+  // 手机号
+  //
+  // 用于手机号登录。
+  string phone_number = 6;
+
+  // 创建时间
+  google.protobuf.Timestamp create_time = 8;
+
+  // 更新时间
+  google.protobuf.Timestamp update_time = 9;
+}
+
+// 密码结构
+message Password {
+  // 资源名称
+  // namespaces/<namespace_id>/users/<user_id>/password
+  string name = 1;
+  bytes hashed_password = 2;
+
+  // 创建时间
+  google.protobuf.Timestamp create_time = 3;
+
+  // 更新时间
+  google.protobuf.Timestamp update_time = 4;
+}
+
+// 创建用户的请求
+message CreateUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>
+  string namespace = 1;
+
+  // 用户 ID
+  //
+  // 指定一个 ID，如果不指定则随机生成。
+  string id = 2;
+
+  // 密码
+  //
+  // 存在 spanner 的 column 中，不存入 proto。
+  bytes password = 3;
+  User user = 4;
+}
+
+// 获取用户的请求
+message GetUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>/users/<user_id>
+  string name = 1;
+}
+
+// 列举用户的请求
+message ListUsersRequest {
+  // 资源名称
+  // namespaces/<namespace_id>
+  string namespace = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+// 列举用户的返回结构
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+}
+
+// 删除用户请求
+message DeleteUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>
+  string name = 1;
+}
+
+// 更新用户请求
+message UpdateUserRequest {
+  User user = 1;
+}
+
+// 更新用户的密码
+message UpdateUserPasswordRequest {
+  // 资源名称
+  // namespaces/<namespace_id>/users/<user_id>
+  string name = 1;
+
+  // 新密码
+  bytes password = 2;
+}
+
+// 更新用户的密码的结果
+message UpdateUserPasswordResponse {}
