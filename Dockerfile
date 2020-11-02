@@ -1,20 +1,9 @@
-FROM golang:latest
+FROM scratch
 
-ENV GOPROXY https://goproxy.io
-ENV GO111MODULE on
+WORKDIR /carefree
 
-WORKDIR /go/cache
+COPY door .
 
-ADD go.mod .
-ADD go.sum .
-RUN go mod download
+COPY project/door/frontend/build /carefree/project/door/frontend/build
 
-WORKDIR /go/carefree
-
-ADD . .
-
-RUN go build ./project/door/frontend
-
-EXPOSE 8000
-
-ENTRYPOINT [ "./frontend" ]
+ENTRYPOINT [ "./door" ]
