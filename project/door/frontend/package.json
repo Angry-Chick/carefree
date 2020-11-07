@@ -11,10 +11,13 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "antd": "^4.3.5",
+    "google-protobuf": "^3.13.0",
+    "grpc-web": "^1.2.1",
     "node-sass": "^4.14.1",
+    "protobufjs": "^6.10.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "^4.0.0",
+    "react-scripts": "4.0.0",
     "typescript": "~3.7.2"
   },
   "scripts": {
@@ -24,7 +27,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "ignorePatterns": [
+      "**/*_pb.js"
+    ]
   },
   "browserslist": {
     "production": [

@@ -1,20 +1,21 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
-	"path"
-	"path/filepath"
 
-	"github.com/gin-gonic/gin"
+	"github.com/carefree/project/door/frontend/router"
+	"github.com/carefree/server/rpc"
 )
 
 var (
-	port = 3000
-	root = Resolve("../")
+	port                = 3000
+	doorServiceEndpoint = "127.0.0.1:9090"
+	userServiceEndpoint = "127.0.0.1:9091"
 )
 
 func init() {
@@ -22,37 +23,25 @@ func init() {
 }
 
 func main() {
-	hd, err := initHandlers()
-	if err != nil {
-		log.Fatal(err)
-	}
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatal(err)
 	}
+	ctx := context.Background()
+	dcli, err := rpc.Dial(ctx, doorServiceEndpoint)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ucli, err := rpc.Dial(ctx, userServiceEndpoint)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sc := router.DefaultServiceConn
+	sc.RegisterService(router.DoorService, dcli)
+	sc.RegisterService(router.UserService, ucli)
+	r := router.New(sc)
+	r.RegisterHandle(ctx)
 
 	log.Printf("HTTP server listen on %v", ln.Addr())
-	log.Fatal(http.Serve(ln, hd))
-}
-
-var buildPath = "carefree/project/door/frontend/build"
-
-func initHandlers() (*gin.Engine, error) {
-	r := gin.Default()
-	r.LoadHTMLFiles(path.Join(root, buildPath, "index.html"))
-	r.Static("/static", path.Join(root, buildPath, "static"))
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Door",
-		})
-	})
-	return r, nil
-}
-
-func Resolve(p string) string {
-	r, err := filepath.Abs(p)
-	if err != nil {
-		return p
-	}
-	return r
+	log.Fatal(http.Serve(ln, r))
 }
