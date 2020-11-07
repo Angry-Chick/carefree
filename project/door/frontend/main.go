@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/carefree/project/door/frontend/router"
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 )
 
 var (

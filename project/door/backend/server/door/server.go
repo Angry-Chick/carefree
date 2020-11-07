@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/carefree/project/common/db"
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

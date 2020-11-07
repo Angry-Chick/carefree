@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/carefree/project/common/db"
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 
 	pb "github.com/carefree/api/user/v1"
 )

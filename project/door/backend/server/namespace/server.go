@@ -5,7 +5,7 @@ import (
 
 	"github.com/carefree/project/common/db"
 	"github.com/carefree/project/door/datamodel/namespace"
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 	"github.com/golang/protobuf/ptypes/empty"
 
 	pb "github.com/carefree/api/door/v1/namespace"

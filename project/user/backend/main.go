@@ -2,14 +2,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 
+	"github.com/carefree/net/rpc"
 	"github.com/carefree/project/common/db"
 	"github.com/carefree/project/user/backend/server/user"
 	"github.com/carefree/server"
-	"github.com/carefree/server/rpc"
 
 	"gopkg.in/yaml.v2"
 )
@@ -29,16 +28,16 @@ func init() {
 func main() {
 	yamlFile, err := ioutil.ReadFile(dbpath)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 	var cfg db.Config
 	err = yaml.Unmarshal(yamlFile, &cfg)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 	db, err := db.New(&cfg)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("cannot connect database, err:%v", err)
 	}
 	rpc.Handle(user.NewServer(db))
 	log.Fatal(server.Serve(hport, rport))

@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 )
 
 // Server serves both RPC and HTTP.

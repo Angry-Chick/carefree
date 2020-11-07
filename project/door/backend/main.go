@@ -10,7 +10,7 @@ import (
 	"github.com/carefree/project/door/backend/server/door"
 	"github.com/carefree/project/door/backend/server/namespace"
 	"github.com/carefree/server"
-	"github.com/carefree/server/rpc"
+	"github.com/carefree/net/rpc"
 
 	"gopkg.in/yaml.v2"
 )
