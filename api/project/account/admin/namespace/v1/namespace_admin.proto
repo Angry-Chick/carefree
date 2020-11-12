@@ -1,16 +1,24 @@
 syntax = "proto3";
 
-package carefree.door.namespace;
+package carefree.project.account.admin.namespace.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+// import "api/ecnova/account/admin/user/v1/account_admin_user.proto";
 
-option go_package = "github.com/carefree/api/door/v1/namespace;namespace_proto";
+option go_package = "github.com/carefree/api/project/account/admin/namespace/v1;namespace_proto";
 
-service NamespaceService {
+service NamespaceAdmin {
+  // 创建命名空间
   rpc CreateNamespace(CreateNamespaceRequest) returns (Namespace);
+
+  // 删除命名空间
   rpc DeleteNamespace(DeleteNamespaceRequest) returns (google.protobuf.Empty);
+
+  // 获取命名空间
   rpc GetNamespace(GetNamespaceRequest) returns (Namespace);
+
+  // 更新命名空间
   rpc UpdateNamespace(UpdateNamespaceRequest) returns (Namespace);
 }
 
@@ -26,8 +34,8 @@ message Namespace {
   // 命名空间描述
   string description = 3;
 
-  // door 计数
-  int32 door_count = 4;
+  // 用户计数
+  int32 user_count = 4;
 
   // 创建时间
   google.protobuf.Timestamp create_time = 5;
@@ -36,6 +44,7 @@ message Namespace {
   google.protobuf.Timestamp update_time = 6;
 }
 
+// 创建命名空间的请求
 message CreateNamespaceRequest {
   // 命名空间 ID
   //
@@ -44,18 +53,21 @@ message CreateNamespaceRequest {
   Namespace namespace = 2;
 }
 
+// 删除命名空间的请求
 message DeleteNamespaceRequest {
   // 资源名称
   // namespaces/<id>
   string name = 1;
 }
 
+// 获取命名空间的请求
 message GetNamespaceRequest {
   // 资源名称
   // namespaces/<id>
   string name = 1;
 }
 
+// 更新命名空间的请求
 message UpdateNamespaceRequest {
   Namespace namespace = 1;
 }

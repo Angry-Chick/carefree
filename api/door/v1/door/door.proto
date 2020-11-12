@@ -4,7 +4,7 @@ package carefree.door.door;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "carefree/api/door/v1/door;door_proto";
+option go_package = "github.com/carefree/api/door/v1/door;door_proto";
 
 
 service DoorService {

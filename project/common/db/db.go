@@ -133,6 +133,10 @@ func (db *DB) Delete(name string) error {
 	return db.DB.Delete(&Row{Name: name}).Error
 }
 
+func (db *DB) Purge(name string) error {
+	return db.DB.Unscoped().Delete(&Row{Name: name}).Error
+}
+
 func getRow(db *gorm.DB) (*Row, error) {
 	var row Row
 	if err := db.Scan(&row).Error; err != nil {

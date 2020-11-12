@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package carefree.project.type;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/carefree/api/project/type/accesstoken;accesstoken_proto";
+
+message Token {
+  string opaque = 1;
+  string type = 2;
+  google.protobuf.Timestamp expiry = 3;
+}

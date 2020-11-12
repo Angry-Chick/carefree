@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package carefree.project.account.admin.user.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/carefree/api/project/account/admin/user/v1;user_proto";
+
+service UserAdmin {
+  // 创建一个用户，用户的 id 由系统生成，创建用户时，可以传递一个密码
+  rpc CreateUser(CreateUserRequest) returns (User);
+
+  // 删除一个用户
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+
+  // 获取一个用户
+  rpc GetUser(GetUserRequest) returns (User);
+
+  // 更新用户
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+}
+
+// 用户结构
+message User {
+  // 资源名称
+  // namespaces/<namespace_id>/users/<user_id>
+  string name = 1;
+
+  // 用户名称
+  string display_name = 2;
+
+  // 头像
+  string avatar_url = 3;
+
+  // 用户名
+  //
+  // 可以修改，用于用户登录，无需验证即可登录。
+  string username = 4;
+
+  // 邮箱
+  //
+  // 用于邮箱登录。
+  string email = 5;
+
+  // 手机号
+  //
+  // 用于手机号登录。
+  string phone_number = 6;
+
+  // 用户密码
+  string password = 7;
+
+  // 创建时间
+  google.protobuf.Timestamp create_time = 8;
+
+  // 更新时间
+  google.protobuf.Timestamp update_time = 9;
+}
+
+// 创建用户的请求
+message CreateUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>
+  string namespace = 1;
+
+  // 用户 ID
+  //
+  // 指定一个 ID，如果不指定则随机生成。
+  string id = 2;
+
+  User user = 4;
+}
+
+// 获取用户的请求
+message GetUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>/users/<user_id>
+  string name = 1;
+}
+
+// 删除用户请求
+message DeleteUserRequest {
+  // 资源名称
+  // namespaces/<namespace_id>
+  string name = 1;
+}
+
+// 更新用户请求
+message UpdateUserRequest {
+  User user = 1;
+}
