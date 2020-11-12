@@ -8,9 +8,10 @@ import (
 
 	"github.com/carefree/net/rpc"
 	"github.com/carefree/project/common/db"
-	"github.com/carefree/project/home/datamodel/home"
-	"github.com/carefree/project/home/datamodel/room"
-	"github.com/carefree/project/home/datamodel/user"
+	"github.com/carefree/project/home/backend/server/admin/home"
+	"github.com/carefree/project/home/backend/server/admin/user"
+	"github.com/carefree/project/home/backend/server/room"
+
 	"github.com/carefree/server"
 
 	"gopkg.in/yaml.v2"
