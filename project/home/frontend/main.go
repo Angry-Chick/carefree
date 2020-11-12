@@ -28,17 +28,17 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	dcli, err := rpc.Dial(ctx, doorServiceEndpoint)
+	hcli, err := rpc.Dial(ctx, homeServiceEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
-	ucli, err := rpc.Dial(ctx, userServiceEndpoint)
+	acli, err := rpc.Dial(ctx, accountServiceEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
 	sc := router.DefaultServiceConn
-	sc.RegisterService(router.DoorService, dcli)
-	sc.RegisterService(router.UserService, ucli)
+	sc.RegisterService(router.AccountService, acli)
+	sc.RegisterService(router.HomeService, hcli)
 	r := router.New(sc)
 	r.RegisterHandle(ctx)
 
