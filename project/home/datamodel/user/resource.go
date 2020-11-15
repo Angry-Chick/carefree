@@ -29,8 +29,8 @@ func CheckID(id string) error {
 	return fmt.Errorf("invalid BankAccount id: %q not match %q", id, idPattern)
 }
 
-func FullName(home, id string) string {
-	return path.Join(home, "users", id)
+func FullName(namespace, id string) string {
+	return path.Join(namespace, "users", id)
 }
 
 type Resources struct {

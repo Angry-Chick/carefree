@@ -28,10 +28,6 @@ func (s *Server) Register(svr *rpc.Server) {
 	pb.RegisterUserAdminServer(svr.GRPC, s)
 }
 
-func (s *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
-}
-
 func (s *Server) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*empty.Empty, error) {
 	rs := user.New(s.db)
 	err := rs.Purge(req.Name)

@@ -2,8 +2,13 @@ package jwt
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
+)
+
+const (
+	identityTokenDefaultTTL = 7 * 24 * time.Hour
 )
 
 // JWT 包含签名秘钥
@@ -42,4 +47,9 @@ func (j *JWT) ParseToken(ts string) (*Claims, error) {
 		return nil, fmt.Errorf("无效的 token")
 	}
 	return c, nil
+}
+
+// IdentityTokenExpiry define a 7 day's expiryTime
+func IdentityTokenExpiry() time.Time {
+	return time.Now().Add(identityTokenDefaultTTL)
 }

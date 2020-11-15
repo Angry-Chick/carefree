@@ -22,28 +22,28 @@ service UserAdmin {
 }
 
 message User {
-    // 资源名称
-    //
-    // Readonly.
-    string name = 1;
-  
-    // 显示名称
-    string display_name = 2;
-  
-    // 描述
-    string description = 3;
-  
-    // 创建时间
-    //
-    // Output Only.
-    google.protobuf.Timestamp create_time = 14;
-  
-    // 更新时间
-    //
-    // Output Only.
-    google.protobuf.Timestamp update_time = 15;
-  }
-  
+  // 资源名称
+  //
+  // Readonly.
+  string name = 1;
+
+  // 显示名称
+  string display_name = 2;
+
+  // 描述
+  string description = 3;
+
+  // 创建时间
+  //
+  // Output Only.
+  google.protobuf.Timestamp create_time = 14;
+
+  // 更新时间
+  //
+  // Output Only.
+  google.protobuf.Timestamp update_time = 15;
+}
+
 
 // 创建 User 的请求
 message CreateUserRequest {

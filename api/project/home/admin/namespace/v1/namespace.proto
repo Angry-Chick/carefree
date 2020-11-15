@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package carefree.project.account.admin.namespace.v1;
+package carefree.project.home.admin.namespace.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/carefree/api/project/account/admin/namespace/v1;namespace_proto";
+option go_package = "github.com/carefree/api/project/home/admin/namespace/v1;namespace_proto";
 
 service NamespaceAdmin {
   // 创建命名空间
@@ -33,8 +33,8 @@ message Namespace {
   // 命名空间描述
   string description = 3;
 
-  // 用户计数
-  int32 user_count = 4;
+  // 用于登录
+  string user_namespace = 4;
 
   // 创建时间
   google.protobuf.Timestamp create_time = 5;

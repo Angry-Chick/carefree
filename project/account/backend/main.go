@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/carefree/net/rpc"
+	"github.com/carefree/project/account/backend/server/admin/namespace"
+	"github.com/carefree/project/account/backend/server/admin/user"
 	"github.com/carefree/project/account/backend/server/account"
 	"github.com/carefree/project/common/db"
 	"github.com/carefree/server"
@@ -40,5 +42,7 @@ func main() {
 		log.Fatalf("cannot connect database, err:%v", err)
 	}
 	rpc.Handle(account.NewServer(db))
+	rpc.Handle(namespace.NewServer(db))
+	rpc.Handle(user.NewServer(db))
 	log.Fatal(server.Serve(hport, rport))
 }

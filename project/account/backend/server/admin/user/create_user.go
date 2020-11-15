@@ -10,7 +10,7 @@ import (
 	pb "github.com/carefree/api/project/account/admin/user/v1"
 )
 
-func (s *Server) CreateNamespace(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+func (s *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
 	proc := &createProc{req: req}
 	if err := proc.do(s.db); err != nil {
 		return nil, err
@@ -37,6 +37,8 @@ func (p *createProc) do(db *db.DB) error {
 	n := &pb.User{
 		Name:        user.FullName(p.req.Namespace, id),
 		DisplayName: p.req.User.DisplayName,
+		Username:    p.req.User.Username,
+		Password:    p.req.User.Password,
 	}
 	p.resp, err = users.Create(n)
 	if err != nil {

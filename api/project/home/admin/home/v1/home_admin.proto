@@ -17,15 +17,11 @@ service HomeAdmin {
 // 命名空间的结构
 message Home {
   // 资源名称
-  // homes/<id>
+  // namespace/<id>/homes/<id>
   string name = 1;
 
   // home 名称
   string display_name = 2;
-
-
-  // 用于登录
-  int32 user_namespace = 4;
 
   // 创建时间
   google.protobuf.Timestamp create_time = 5;

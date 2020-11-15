@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package carefree.project.home.v1;
+
+option go_package = "github.com/carefree/api/project/home/v1;home_proto";
+
+// 账户服务
+service Account {
+  // 注册
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+}
+
+// 注册的请求
+message SignUpRequest {
+  // 资源名称
+  string namespace = 1;
+
+  //  用户名
+  string user_name = 2;
+
+  // 密码
+  //
+  // Required.
+  string password = 3;
+}
+
+// 注册的结果
+message SignUpResponse {}

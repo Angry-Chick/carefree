@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var cfg db.Config
-	yamlFile, err := ioutil.ReadFile("project/door/cfg.yaml")
+	yamlFile, err := ioutil.ReadFile("project/home/cfg.yaml")
 	if err != nil {
 		fmt.Println(err.Error())
 	}

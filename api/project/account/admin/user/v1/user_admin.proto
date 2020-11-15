@@ -90,3 +90,14 @@ message DeleteUserRequest {
 message UpdateUserRequest {
   User user = 1;
 }
+
+message BasicAuthCredential {
+  // the resource name of the user
+  string user = 1;
+  oneof login {
+    string username = 2;
+    string email = 3;
+    string phone_number = 4;
+  }
+  string password = 5;
+}
