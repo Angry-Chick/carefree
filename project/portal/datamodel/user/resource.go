@@ -7,7 +7,7 @@ import (
 
 	"github.com/carefree/project/common/db"
 
-	pb "github.com/carefree/api/project/account/user/v1"
+	pb "github.com/carefree/api/project/portal/user/v1"
 )
 
 func ToResource(r *db.Row) (*pb.User, error) {
@@ -67,8 +67,4 @@ func (r Resources) Create(res *pb.User) (*pb.User, error) {
 
 func (r Resources) Delete(name string) error {
 	return r.db.Delete(name)
-}
-
-func (r Resources) Purge(name string) error {
-	return r.db.Purge(name)
 }

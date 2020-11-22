@@ -6,7 +6,7 @@ import "api/project/type/accesstoken/accesstoken.proto";
 
 option go_package = "github.com/carefree/api/project/account/v1;account_proto";
 
-service Account {
+service AccountService {
   // 使用用户名密码登录认证，可以使用经过认证的邮件地址、手机号等进行登录
   rpc BasicAuth(BasicAuthRequest) returns (type.Token);
 }
@@ -32,7 +32,4 @@ message BasicAuthRequest {
 
   // 密码
   string password = 4;
-
-  // 命名空间
-  string namespace = 5;
 }

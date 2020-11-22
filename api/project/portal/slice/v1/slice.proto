@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package carefree.project.portal.slice.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/carefree/api/project/portal/slice/v1;slice_proto";
+
+
+service SliceService {
+  rpc CreateSlice(CreateSliceRequest) returns (Slice);  
+  rpc UpdateSlice(UpdateSliceRequest) returns (Slice);
+  rpc DeleteSlice(DeleteSliceRequest) returns (google.protobuf.Empty);
+  rpc GetSlice(GetSliceRequest) returns (Slice);
+}
+
+message Slice{
+    message location{
+        int32 x=1;
+        int32 y=2;
+        int32 weight=3;
+        int32 height=4;
+    }
+    message BookMark{
+        string title=1;
+        string image=2;
+        string link=3;
+        repeated string lables=4;
+    }
+    message Group{
+        string title=1;
+        string style =2;
+        bool display=3;
+        repeated BookMark bookmarks=4;
+        location loc =5;
+    }
+    string name =1;
+    string background =3;
+    repeated Group groups = 4;
+}
+
+message CreateSliceRequest{
+    string space=1;
+    string id=2;
+    Slice slice=3;
+}
+
+message UpdateSliceRequest{
+    Slice slice=1;
+}
+
+message DeleteSliceRequest{
+    string name=1;
+}
+
+message GetSliceRequest{
+    string name=1;
+}

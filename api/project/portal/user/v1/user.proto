@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package carefree.project.portal.user.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/carefree/api/project/portal/user/v1;user_proto";
+
+service UserService {
+  // 创建 User
+  rpc CreateUser(CreateUserRequest) returns (User);
+
+  // 更新 User
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+
+  // 获取 User
+  rpc GetUser(GetUserRequest) returns (User);
+
+  // 删除 User
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+}
+
+message User {
+  // 资源名称
+  string name = 1;
+
+  // 显示名称
+  string display_name = 2;
+
+  // 描述
+  string description = 3;
+}
+
+
+// 创建 User 的请求
+message CreateUserRequest {
+  string id = 1;
+
+  // User
+  User user = 2;
+}
+
+// 更新 User 的请求
+message UpdateUserRequest {
+  // User
+  User user = 1;
+}
+
+// 获取 User 的请求
+message GetUserRequest {
+  // User 资源名
+  string name = 1;
+}
+
+// 删除 User 的请求
+message DeleteUserRequest {
+  // User 资源名
+  string name = 1;
+}

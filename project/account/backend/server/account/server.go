@@ -2,19 +2,16 @@ package account
 
 import (
 	"context"
+	"time"
 
 	"github.com/carefree/net/rpc"
-	"github.com/carefree/project/account/datamodel/credential"
 	"github.com/carefree/project/account/datamodel/user"
 	"github.com/carefree/project/common/db"
 	"github.com/carefree/project/common/jwt"
-	"github.com/carefree/project/common/objectid"
-	"github.com/golang/protobuf/ptypes"
+	jg "github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	upb "github.com/carefree/api/project/account/admin/user/v1"
-	acpb "github.com/carefree/api/project/account/type"
 	pb "github.com/carefree/api/project/account/v1"
 	atpb "github.com/carefree/api/project/type/accesstoken"
 )
@@ -31,7 +28,7 @@ func NewServer(db *db.DB) *Server {
 
 // Register implement rpc service's Register method.
 func (s *Server) Register(svr *rpc.Server) {
-	pb.RegisterAccountServer(svr.GRPC, s)
+	pb.RegisterAccountServiceServer(svr.GRPC, s)
 }
 
 func (s *Server) BasicAuth(ctx context.Context, req *pb.BasicAuthRequest) (*atpb.Token, error) {
@@ -48,49 +45,36 @@ type basicAuthProc struct {
 }
 
 func (p *basicAuthProc) do(db *db.DB) error {
-	credentials := credential.New(db)
 	users := user.New(db)
 
-	// TODO(ljy):暂时先实现只通过用户名方式, id 也暂时设置为用户名
-	userName := user.FullName(p.req.GetNamespace(), p.req.GetUsername())
-	u, err := users.Get(userName)
+	// TODO(ljy):初期暂时先实现只通过用户名方式, id 也暂时设置为用户名。
+	// 未来可以通过邮箱和手机号的形式登录
+	// 用户名和用户 ID 为不同的值，通过关联表通过用户名来找到 user id
+	un := user.FullName(p.req.GetUsername())
+	u, err := users.Get(un)
 	if err != nil {
-		return err
+		return status.Error(codes.NotFound, "user not found")
 	}
 	if u.Password != p.req.Password {
-		return status.Error(codes.InvalidArgument, "invalid password")
+		return status.Error(codes.InvalidArgument, "error password")
 	}
-	expiryTime, err := ptypes.TimestampProto(jwt.IdentityTokenExpiry())
+	expiresAt := jwt.IdentityTokenExpiry().Unix()
+	claims := jwt.Claims{
+		User: p.req.GetUsername(),
+		StandardClaims: jg.StandardClaims{
+			IssuedAt:  time.Now().Unix(),
+			ExpiresAt: expiresAt,
+			Issuer:    "carefree.account",
+		},
+	}
+	tk, err := jwt.New().GenerateToken(&claims)
 	if err != nil {
 		return err
 	}
-	id, err := p.newCredentialID()
-	if err != nil {
-		return err
-	}
-	bc := &upb.BasicAuthCredential{
-		User:     userName,
-		Password: u.Password,
-		Login: &upb.BasicAuthCredential_Username{
-			Username: u.Username,
-		},
-	}
-	cred := acpb.Credential{
-		Name:       credential.FullName(id),
-		ExpireTime: expiryTime,
-		Payload: &acpb.Credential_BasicAuth{
-			BasicAuth: bc,
-		},
-	}
-	credentials.Create(&cred)
 	p.resp = &atpb.Token{
-		Opaque: id,
-		Expiry: expiryTime,
+		Opaque: tk,
 		Type:   "Bearer",
+		Expiry: expiresAt,
 	}
 	return nil
-}
-
-func (p *basicAuthProc) newCredentialID() (string, error) {
-	return objectid.Base64()
 }

@@ -17,14 +17,14 @@ type JWT struct {
 }
 
 // New 初始化一个 JWT 对象
+// TODO(ljy): 暂时先使用默认的 singing key，之后从环境变量中读取
 func New() *JWT {
 	return &JWT{SigningKey: []byte("carefree.com")}
 }
 
 // Claims 自定义有效载荷(这里采用自定义的Name和Email作为有效载荷的一部分)
 type Claims struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	User string `json:"user"`
 	jwt.StandardClaims
 }
 

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package carefree.project.portal.space.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/carefree/api/project/portal/space/v1;space_proto";
+
+service SpaceService {
+  rpc CreateSpace(CreateSpaceRequest) returns (Space);
+  rpc DeleteSpace(DeleteSpaceRequest) returns (google.protobuf.Empty);
+  rpc GetSpace(GetSpaceRequest) returns (Space);
+  rpc UpdateSpace(UpdateSpaceRequest) returns (Space);
+}
+
+message Space {
+  // 资源名称
+  // spaces/<id>
+  string name = 1;
+
+  // space 名称
+  string display_name = 2;
+}
+
+message CreateSpaceRequest {
+  // space ID
+  //
+  // 指定一个 ID，如果不指定则随机生成。
+  string id = 1;
+  Space space = 2;
+}
+
+message DeleteSpaceRequest {
+  // 资源名称
+  // spaces/<id>
+  string name = 1;
+}
+
+message GetSpaceRequest {
+  // 资源名称
+  // spaces/<id>
+  string name = 1;
+}
+
+message UpdateSpaceRequest {
+  Space space = 1;
+}

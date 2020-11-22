@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package carefree.project.portal.v1;
+
+option go_package = "github.com/carefree/api/project/portal/v1;portal_proto";
+
+service PortalService {
+  // 注册
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+}
+
+// 注册的请求
+message SignUpRequest {
+  //  用户名
+  string username = 1;
+
+  // 密码
+  string password = 2;
+}
+
+// 注册的结果
+message SignUpResponse {}

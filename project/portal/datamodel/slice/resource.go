@@ -1,4 +1,4 @@
-package user
+package slice
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 
 	"github.com/carefree/project/common/db"
 
-	pb "github.com/carefree/api/project/account/user/v1"
+	pb "github.com/carefree/api/project/portal/slice/v1"
 )
 
-func ToResource(r *db.Row) (*pb.User, error) {
-	var res pb.User
+func ToResource(r *db.Row) (*pb.Slice, error) {
+	var res pb.Slice
 	if err := db.Unmarshal(r.Resource, &res); err != nil {
 		return nil, err
 	}
@@ -29,8 +29,8 @@ func CheckID(id string) error {
 	return fmt.Errorf("invalid BankAccount id: %q not match %q", id, idPattern)
 }
 
-func FullName(id string) string {
-	return path.Join("users", id)
+func FullName(space, id string) string {
+	return path.Join(space, "slices", id)
 }
 
 type Resources struct {
@@ -41,7 +41,7 @@ func New(db *db.DB) *Resources {
 	return &Resources{db: db}
 }
 
-func (r Resources) Get(name string) (*pb.User, error) {
+func (r Resources) Get(name string) (*pb.Slice, error) {
 	row, err := r.db.Get(name)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (r Resources) Get(name string) (*pb.User, error) {
 	return ToResource(row)
 }
 
-func (r Resources) Update(res *pb.User) (*pb.User, error) {
+func (r Resources) Update(res *pb.Slice) (*pb.Slice, error) {
 	row, err := r.db.Update(res)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (r Resources) Update(res *pb.User) (*pb.User, error) {
 	return ToResource(row)
 }
 
-func (r Resources) Create(res *pb.User) (*pb.User, error) {
+func (r Resources) Create(res *pb.Slice) (*pb.Slice, error) {
 	row, err := r.db.Create(res)
 	if err != nil {
 		return nil, err
@@ -67,8 +67,4 @@ func (r Resources) Create(res *pb.User) (*pb.User, error) {
 
 func (r Resources) Delete(name string) error {
 	return r.db.Delete(name)
-}
-
-func (r Resources) Purge(name string) error {
-	return r.db.Purge(name)
 }

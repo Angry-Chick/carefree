@@ -2,12 +2,15 @@ syntax = "proto3";
 
 package carefree.project.type;
 
-import "google/protobuf/timestamp.proto";
-
 option go_package = "github.com/carefree/api/project/type/accesstoken;accesstoken_proto";
 
 message Token {
+  // 经过加密过后的信息
   string opaque = 1;
+
+  // token 类型
   string type = 2;
-  google.protobuf.Timestamp expiry = 3;
+
+  // 过期时间 unixNano
+  int64 expiry = 3;
 }
