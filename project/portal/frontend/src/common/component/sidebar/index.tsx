@@ -46,6 +46,7 @@ export function Sidebar(props: any) {
             <Menu.Item
               key="1"
               onClick={() => {
+                createBookmarkList();
                 setBookmarkList([...bookmarkList, "1"]);
               }}
             >
@@ -133,7 +134,8 @@ export function Sidebar(props: any) {
   );
 }
 
-function fetchBookMarkList() {
+
+function createBookmarkList(){
   axios
     .post("/api/carefree.project.home.room.v1.RoomService/GetRoom", {
       name: "",
@@ -141,5 +143,16 @@ function fetchBookMarkList() {
     .then((res) => {})
     .catch(function (error) {
       console.log(error);
-    });
-}
+    });  
+};
+
+// function fetchBookMarkList() {
+//   axios
+//     .post("/api/carefree.project.home.room.v1.RoomService/GetRoom", {
+//       name: "",
+//     })
+//     .then((res) => {})
+//     .catch(function (error) {
+//       console.log(error);
+//     });
+// }

@@ -5,39 +5,37 @@ import (
 	"encoding/json"
 	"errors"
 
-	pb "github.com/carefree/api/project/portal/slice/v1"
+	pb "github.com/carefree/api/project/portal/space/v1"
 )
 
-type portalSliceService struct {
-	cli pb.SliceServiceClient
+type portalSpaceService struct {
+	cli pb.SpaceServiceClient
 	req []byte
 }
 
-func (s *portalSliceService) handle(ctx context.Context, method string) (resp []byte, err error) {
+func (s *portalSpaceService) handle(ctx context.Context, method string) (resp []byte, err error) {
 	var rs interface{}
 	switch method {
-	case "GetSlice":
+	case "GetSpace":
 		req := struct {
 			Name string `json:"name"`
 		}{}
 		if err := json.Unmarshal(s.req, &req); err != nil {
 			return nil, err
 		}
-		rs, err = s.cli.GetSlice(ctx, &pb.GetSliceRequest{
+		rs, err = s.cli.GetSpace(ctx, &pb.GetSpaceRequest{
 			Name: req.Name,
 		})
-	case "CreateSlice":
+	case "CreateSpace":
 		req := struct {
-			Space string `json:"space"`
-			ID    string `json:"id"`
+			ID string `json:"id"`
 		}{}
 		if err := json.Unmarshal(s.req, &req); err != nil {
 			return nil, err
 		}
-		rs, err = s.cli.CreateSlice(ctx, &pb.CreateSliceRequest{
-			Space: req.Space,
+		rs, err = s.cli.CreateSpace(ctx, &pb.CreateSpaceRequest{
 			Id:    req.ID,
-			Slice: &pb.Slice{},
+			Space: &pb.Space{},
 		})
 	default:
 		return nil, errors.New("unknown mehtod name")

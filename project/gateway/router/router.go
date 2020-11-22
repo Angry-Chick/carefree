@@ -84,22 +84,18 @@ type service interface {
 }
 
 func (r *Router) generateService(sn string, req []byte) (service, error) {
+	var sv service
 	switch sn {
 	case "carefree.project.account.v1.Account":
-		return &accountService{
-			cli: r.accountCli,
-			req: req,
-		}, nil
+		sv = &accountService{cli: r.accountCli, req: req}
 	case "carefree.project.home.room.v1.SliceService":
-		return &spaceSliceService{
-			cli: r.portalSliceCli,
-			req: req,
-		}, nil
+		sv = &portalSliceService{cli: r.portalSliceCli, req: req}
 	case "carefree.project.portal.v1.PortalService":
-		return &portalService{
-			cli: r.portalCli,
-			req: req,
-		}, nil
+		sv = &portalService{cli: r.portalCli, req: req}
+	case "/carefree.project.portal.space.v1.SpaceService":
+		sv = &portalSpaceService{cli: r.portalSpaceCli, req: req}
+	default:
+		return nil, errors.New("unknown service name")
 	}
-	return nil, errors.New("unknown service name")
+	return sv, nil
 }
