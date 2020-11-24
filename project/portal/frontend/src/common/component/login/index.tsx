@@ -4,30 +4,22 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Regist } from "../register";
 import axios from "axios";
 import * as account from "../../service/cred";
+import { SmileOutlined } from "@ant-design/icons";
 
 export interface LoginProviderProps {
   children(user: string): JSX.Element;
 }
 
-axios.interceptors.request.use(
-  (config) => {
-    if (account.defaultCredsProvider.hasValidRefreshToken()) {
-      config.headers.Authorization = `${account.defaultCredsProvider.getRefreshToken()}`;
-    }
-    return config;
-  },
-  (err) => {
-    return Promise.reject(err);
-  }
-);
-
 export function LoginProvider(props: LoginProviderProps) {
   const [user, setUser] = React.useState<string>("");
   const fetchUser = React.useCallback(() => {
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = account.defaultCredsProvider.getRefreshToken();
     axios
-      .get("/api/getUser")
-      .then(function (response) {
-        setUser(response.data);
+      .get("/api/getUserFromToken")
+      .then(function (resp) {
+        setUser(resp.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -42,6 +34,9 @@ export function LoginProvider(props: LoginProviderProps) {
 
   if (!account.defaultCredsProvider.hasValidRefreshToken()) {
     return <LoginForm onLogin={fetchUser} />;
+  }
+  if (user === "") {
+    return <Result icon={<SmileOutlined />} title="正在加载..." />;
   }
   return <div>{props.children(user)}</div>;
 }

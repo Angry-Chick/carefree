@@ -29,6 +29,9 @@ message User {
 
   // 描述
   string description = 3;
+
+  // 包含的 spaces 
+  repeated string my_spaces = 4;
 }
 
 

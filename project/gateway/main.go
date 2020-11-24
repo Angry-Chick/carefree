@@ -41,8 +41,8 @@ func main() {
 	sc.RegisterService(router.AccountService, acli)
 	sc.RegisterService(router.PortalService, hcli)
 	r := router.New(sc)
-	r.Use(auth.JwtAuthentication())
-	r.RegisterHandle(ctx)
+	r.Use(auth.JwtAuthentication)
+	r.RegisterHandle()
 
 	log.Printf("HTTP server listen on %v", ln.Addr())
 	log.Fatal(http.Serve(ln, r))

@@ -1,6 +1,5 @@
 import { Layout, Menu, Breadcrumb, Avatar } from "antd";
 import React from "react";
-import { createFromIconfontCN } from "@ant-design/icons";
 import { BookMarkList } from "../book_mark";
 import { DragPanel } from "../drag_panel";
 import { Note } from "../note";
@@ -18,13 +17,29 @@ export function Sidebar(props: any) {
   }
   const todoProps: Array<valueProps> = [];
   const [todoList, setTodoList] = React.useState(todoProps);
-  const bklistProps: string[] = [];
-  const [bookmarkList, setBookmarkList] = React.useState(bklistProps);
+  const [bookMarkList, setBookMarkList] = React.useState<Array<sliceBookMark>>(
+    []
+  );
   const noteListProps: Array<valueProps> = [];
   const [noteList, setNoteList] = React.useState(noteListProps);
+  const [slice, setSlice] = React.useState<sliceProps>({
+    name: "",
+    background: "",
+    bookmarks: [],
+  });
   const onCollapse = (collapsed: boolean) => {
     setCollapsed(collapsed);
   };
+  React.useEffect(() => {
+    fetchSlice(props.user).then((res) => {
+      setSlice({
+        name: res.name,
+        background: res.background,
+        bookmarks: res.bookmarks,
+      });
+    });
+  }, []);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -46,8 +61,18 @@ export function Sidebar(props: any) {
             <Menu.Item
               key="1"
               onClick={() => {
-                createBookmarkList();
-                setBookmarkList([...bookmarkList, "1"]);
+                const newBK: sliceBookMark = {
+                  title: "",
+                  items: [],
+                  loc: { x: 0, y: 0, weight: 0, height: 0 },
+                };
+                console.log(slice);
+                updateSlice({
+                  name: slice.name,
+                  background: slice.background,
+                  bookmarks: [...bookMarkList, newBK],
+                });
+                setBookMarkList([...bookMarkList, newBK]);
               }}
             >
               添加书签
@@ -88,14 +113,14 @@ export function Sidebar(props: any) {
         </Menu>
       </Sider>
       <div>
-        {bookmarkList.map((v, i) => {
+        {bookMarkList.map((v, i) => {
           return (
             <DragPanel width={300} height={300}>
               <BookMarkList
                 delete={() => {
-                  let li = [...bookmarkList];
+                  let li = [...bookMarkList];
                   li.splice(i, 1);
-                  setBookmarkList(li);
+                  setBookMarkList(li);
                 }}
               />
             </DragPanel>
@@ -134,25 +159,76 @@ export function Sidebar(props: any) {
   );
 }
 
+interface sliceProps {
+  name: string;
+  background: string;
+  bookmarks: Array<sliceBookMark>;
+}
 
-function createBookmarkList(){
+interface sliceBookMark {
+  title: string;
+  items: Array<bookMarkItem>;
+  loc: sliceLocation;
+}
+
+interface sliceLocation {
+  x: number;
+  y: number;
+  weight: number;
+  height: number;
+}
+
+interface bookMarkItem {
+  title: string;
+  link: string;
+}
+
+async function updateSlice(slice: sliceProps) {
   axios
-    .post("/api/carefree.project.home.room.v1.RoomService/GetRoom", {
-      name: "",
+    .post("/api/carefree.project.portal.slice.v1.SliceService/UpdateSlice", {
+      name: slice.name,
+      background: slice.background,
+      bookmarks: slice.bookmarks,
     })
-    .then((res) => {})
+    .then((res) => {
+      return res.data;
+    })
     .catch(function (error) {
       console.log(error);
-    });  
-};
+    });
+}
 
-// function fetchBookMarkList() {
-//   axios
-//     .post("/api/carefree.project.home.room.v1.RoomService/GetRoom", {
-//       name: "",
-//     })
-//     .then((res) => {})
-//     .catch(function (error) {
-//       console.log(error);
-//     });
-// }
+async function fetchSlice(userID: string) {
+  try {
+    const user = await getUser(`users/${userID}`);
+    const sid = user.my_spaces[0];
+    const slice = await getSlice(`spaces/${sid}/slices/${sid}`);
+    return slice;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const getSlice = (sliceName: string) =>
+  axios
+    .post("/api/carefree.project.portal.slice.v1.SliceService/GetSlice", {
+      name: sliceName,
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+const getUser = (userName: string) =>
+  axios
+    .post("/api/carefree.project.portal.user.v1.UserService/GetUser", {
+      name: userName,
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });

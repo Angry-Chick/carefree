@@ -5,6 +5,7 @@ import (
 
 	"github.com/carefree/net/rpc"
 	"github.com/carefree/project/common/db"
+	"github.com/carefree/project/portal/datamodel/user"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -36,7 +37,12 @@ func (s *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb
 }
 
 func (s *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+	rs := user.New(s.db)
+	n, err := rs.Get(req.Name)
+	if err != nil {
+		return nil, err
+	}
+	return n, nil
 }
 
 func (s *Server) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*empty.Empty, error) {

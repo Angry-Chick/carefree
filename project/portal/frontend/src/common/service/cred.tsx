@@ -49,7 +49,7 @@ export class CredsProvider {
     if (!tk.expiry) {
       return true;
     }
-    if (Date.now() > tk.expiry / 1e6) {
+    if (Date.now()/1e3 > tk.expiry) {
       return true
     }
     return false;

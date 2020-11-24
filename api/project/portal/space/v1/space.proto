@@ -18,8 +18,14 @@ message Space {
   // spaces/<id>
   string name = 1;
 
-  // space 名称
+  // 名称
   string display_name = 2;
+
+  // 描述
+  string description = 3;
+
+  // 包含的 slice
+  repeated string my_slice = 4;
 }
 
 message CreateSpaceRequest {

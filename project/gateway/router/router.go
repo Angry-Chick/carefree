@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 
 	aupb "github.com/carefree/api/project/account/user/v1"
 	papb "github.com/carefree/api/project/account/v1"
@@ -57,45 +58,45 @@ func New(sc ServiceConn) *Router {
 	return &r
 }
 
-func (r *Router) RegisterHandle(ctx context.Context) {
+func (r *Router) RegisterHandle() {
 	r.POST("/:service/:method", func(c *gin.Context) {
 		var req interface{}
-		if err := c.BindJSON(&req); err != nil {
-			c.String(http.StatusBadRequest, "err:%s", err)
+		if err := c.Bind(&req); err != nil {
+			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		data, err := json.Marshal(req)
 		if err != nil {
-			c.String(http.StatusBadRequest, "err:%s", err)
+			return
 		}
-		svr, err := r.generateService(c.Param("service"), data)
+		resp, err := r.handle(c, c.Param("service"), c.Param("method"), data)
 		if err != nil {
-			c.String(http.StatusBadRequest, "err:%s", err)
+			c.JSON(http.StatusBadRequest, err)
+			return
 		}
-		resp, err := svr.handle(ctx, c.Param("method"))
-		if err != nil {
-			c.String(http.StatusBadRequest, "err:%s", err)
-		}
-		c.String(200, "%s", string(resp))
+		c.JSON(200, resp)
 	})
 }
 
 type service interface {
-	handle(ctx context.Context, method string) (resp []byte, err error)
+	handle(ctx context.Context) (proto.Message, error)
 }
 
-func (r *Router) generateService(sn string, req []byte) (service, error) {
+func (r *Router) handle(ctx context.Context, sn string, mn string, req []byte) (proto.Message, error) {
 	var sv service
 	switch sn {
 	case "carefree.project.account.v1.Account":
-		sv = &accountService{cli: r.accountCli, req: req}
-	case "carefree.project.home.room.v1.SliceService":
-		sv = &portalSliceService{cli: r.portalSliceCli, req: req}
+		sv = &accountService{cli: r.accountCli, req: req, method: mn}
+	case "carefree.project.portal.slice.v1.SliceService":
+		sv = &portalSliceService{cli: r.portalSliceCli, req: req, method: mn}
 	case "carefree.project.portal.v1.PortalService":
-		sv = &portalService{cli: r.portalCli, req: req}
-	case "/carefree.project.portal.space.v1.SpaceService":
-		sv = &portalSpaceService{cli: r.portalSpaceCli, req: req}
+		sv = &portalService{cli: r.portalCli, req: req, method: mn}
+	case "carefree.project.portal.space.v1.SpaceService":
+		sv = &portalSpaceService{cli: r.portalSpaceCli, req: req, method: mn}
+	case "carefree.project.portal.user.v1.UserService":
+		sv = &portalUserService{cli: r.portalUserCli, req: req, method: mn}
 	default:
 		return nil, errors.New("unknown service name")
 	}
-	return sv, nil
+	return sv.handle(ctx)
 }

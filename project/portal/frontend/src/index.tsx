@@ -11,8 +11,7 @@ ReactDOM.render(
     <App>
       <LoginProvider>
         {(user) => {
-          return <Sidebar user={user}> 
-          </Sidebar>
+          return <Sidebar user={user}/> 
         }}
       </LoginProvider>
     </App>

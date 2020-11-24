@@ -15,28 +15,26 @@ service SliceService {
 }
 
 message Slice{
-    message location{
-        int32 x=1;
-        int32 y=2;
-        int32 weight=3;
-        int32 height=4;
-    }
-    message BookMark{
+    message Bookmark{
+        message location{
+            int32 x=1;
+            int32 y=2;
+            int32 weight=3;
+            int32 height=4;
+        }
+        message item{
+            string title=1;
+            string image=2;
+            string link=3;
+            repeated string lables=4;
+        }
         string title=1;
-        string image=2;
-        string link=3;
-        repeated string lables=4;
-    }
-    message Group{
-        string title=1;
-        string style =2;
-        bool display=3;
-        repeated BookMark bookmarks=4;
-        location loc =5;
+        repeated item items=2;
+        location loc =3;
     }
     string name =1;
     string background =3;
-    repeated Group groups = 4;
+    repeated Bookmark bookmarks=4;
 }
 
 message CreateSliceRequest{
