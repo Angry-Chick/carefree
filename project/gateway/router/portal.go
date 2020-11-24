@@ -2,39 +2,29 @@ package router
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 
 	pb "github.com/carefree/api/project/portal/v1"
 )
 
 type portalService struct {
-	cli pb.PortalServiceClient
-	req []byte
+	cli    pb.PortalServiceClient
+	method string
+	req    []byte
 }
 
-func (s *portalService) handle(ctx context.Context, method string) ([]byte, error) {
-	switch method {
+func (s *portalService) handle(ctx context.Context) (proto.Message, error) {
+	switch s.method {
 	case "SignUp":
-		req := struct {
-			Username string `json:"username"`
-			Password string `json:"password"`
-		}{}
-		if err := json.Unmarshal(s.req, &req); err != nil {
+		req := &pb.SignUpRequest{}
+		if err := protojson.Unmarshal(s.req, req); err != nil {
 			return nil, err
 		}
-		rs, err := s.cli.SignUp(ctx, &pb.SignUpRequest{
-			Password: req.Password,
-			Username: req.Username,
-		})
-		if err != nil {
-			return nil, err
-		}
-		resp, err := json.Marshal(rs)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+		return s.cli.SignUp(ctx, req)
+
 	default:
 		return nil, errors.New("unknown method")
 	}

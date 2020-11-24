@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -12,52 +11,51 @@ import (
 	tpb "github.com/carefree/api/project/type/accesstoken"
 )
 
-type key int
-
-const (
-	keyBody key = iota
-)
-
-func JwtAuthentication() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if c.Request.URL.Path == "/carefree.project.account.v1.Account/BasicAuth" {
-			c.Next()
-			return
-		}
-		if c.Request.URL.Path == "/carefree.project.portal.v1.PortalService/SignUp" {
-			c.Next()
-			return
-		}
-		tkStr := c.GetHeader("Authorization")
-		if tkStr == "" {
-			c.JSON(http.StatusUnauthorized, "missing token")
-			c.Abort()
-			return
-		}
-		token := &tpb.Token{}
-		if err := json.Unmarshal([]byte(tkStr), token); err != nil {
-			c.JSON(http.StatusUnauthorized, "invalid token")
-			c.Abort()
-			return
-		}
-		now := time.Now().UnixNano()
-		if now > token.GetExpiry() {
-			c.JSON(http.StatusUnauthorized, "token has expired")
-			c.Abort()
-			return
-		}
-		tk, err := jwt.New().ParseToken(token.Opaque)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, "token is invalid")
-			c.Abort()
-			return
-		}
-		if c.Request.URL.Path == "/getUser" {
-			c.JSON(http.StatusOK, tk.User)
-			return
-		}
-		ctx := context.WithValue(c, keyBody, tk.User)
-		c.Request.WithContext(ctx)
-		c.Next()
+func JwtAuthentication(c *gin.Context) {
+	whitelist := []string{
+		"/carefree.project.account.v1.Account/BasicAuth",
+		"/carefree.project.portal.v1.PortalService/SignUp",
 	}
+	if isWhitelist(c.Request.URL.Path, whitelist) {
+		c.Next()
+		return
+	}
+	tkStr := c.GetHeader("Authorization")
+	if tkStr == "" {
+		c.String(http.StatusUnauthorized, "%s", "missing token")
+		c.Abort()
+		return
+	}
+	token := &tpb.Token{}
+	if err := json.Unmarshal([]byte(tkStr), token); err != nil {
+		c.String(http.StatusUnauthorized, "%s", "invalid token")
+		c.Abort()
+		return
+	}
+	now := time.Now().Unix()
+	if now > token.GetExpiry() {
+		c.String(http.StatusUnauthorized, "%s", "token has expired")
+		c.Abort()
+		return
+	}
+	tk, err := jwt.New().ParseToken(token.Opaque)
+	if err != nil {
+		c.String(http.StatusUnauthorized, "%s", "token is invalid")
+		c.Abort()
+		return
+	}
+	if c.Request.URL.Path == "/getUserFromToken" {
+		c.String(http.StatusOK, "%s", tk.User)
+	}
+	c.Set("user", tk.User)
+	c.Next()
+}
+
+func isWhitelist(path string, whitelist []string) bool {
+	for _, v := range whitelist {
+		if path == v {
+			return true
+		}
+	}
+	return false
 }
