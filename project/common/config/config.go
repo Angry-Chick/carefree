@@ -1,6 +1,9 @@
 package config
 
 import (
+	"net/url"
+	"strconv"
+
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
@@ -12,18 +15,31 @@ type Client struct {
 }
 
 type Config struct {
-	constant.ClientConfig
+	sc []constant.ServerConfig
+	cc constant.ClientConfig
 }
 
-func DefaultConfig(endpoint string, un string, pwd string) *Config {
+func DefaultConfig(endpoint string, un string, pwd string) (*Config, error) {
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
+	}
+	port, err := strconv.Atoi(u.Port())
+	if err != nil {
+		return nil, err
+	}
 	return &Config{
-		constant.ClientConfig{
+		sc: []constant.ServerConfig{{
+			IpAddr: u.Hostname(),
+			Port:   uint64(port),
+			Scheme: "http",
+		}},
+		cc: constant.ClientConfig{
 			Username:            un,
 			Password:            pwd,
 			NamespaceId:         "public",
 			TimeoutMs:           5000,
 			ListenInterval:      10000,
-			Endpoint:            endpoint,
 			NotLoadCacheAtStart: true,
 			LogDir:              "/tmp/nacos/log",
 			CacheDir:            "/tmp/nacos/cache",
@@ -31,12 +47,13 @@ func DefaultConfig(endpoint string, un string, pwd string) *Config {
 			MaxAge:              3,
 			LogLevel:            "debug",
 		},
-	}
+	}, nil
 }
 
 func NewClient(cfg *Config) (*Client, error) {
 	cli, err := clients.CreateConfigClient(map[string]interface{}{
-		"clientConfig": cfg.ClientConfig,
+		"clientConfig":  cfg.cc,
+		"serverConfigs": cfg.sc,
 	})
 	if err != nil {
 		return nil, err

@@ -20,8 +20,8 @@ var (
 
 	serviceName    = "account"
 	configEndpoint = "127.0.0.1:8848"
-	configUsername = "test"
-	configPassword = "test"
+	configUsername = "nacos"
+	configPassword = "nacos"
 )
 
 func init() {
@@ -33,7 +33,10 @@ func init() {
 
 func main() {
 	flag.Parse()
-	cg := config.DefaultConfig(configEndpoint, configUsername, configPassword)
+	cg, err := config.DefaultConfig(configEndpoint, configUsername, configPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
 	ncli, err := config.NewClient(cg)
 	if err != nil {
 		log.Fatal(err)

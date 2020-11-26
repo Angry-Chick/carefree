@@ -22,10 +22,10 @@ var (
 	rport = 9090
 
 	serviceName     = "portal"
-	accountEndpoint = "127.0.0.1:9091"
-	configEndpoint  = "127.0.0.1:8848"
-	configUsername  = "test"
-	configPassword  = "test"
+	accountEndpoint = "http://127.0.0.1:9091"
+	configEndpoint  = "http://127.0.0.1:8848"
+	configUsername  = "nacos"
+	configPassword  = "nacos"
 )
 
 func init() {
@@ -37,7 +37,10 @@ func init() {
 
 func main() {
 	flag.Parse()
-	cg := config.DefaultConfig(configEndpoint, configUsername, configPassword)
+	cg, err := config.DefaultConfig(configEndpoint, configUsername, configPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
 	ncli, err := config.NewClient(cg)
 	if err != nil {
 		log.Fatal(err)
@@ -57,6 +60,9 @@ func main() {
 	}
 	ctx := context.Background()
 	ac, err := rpc.Dial(ctx, accountEndpoint)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rpc.Handle(space.NewServer(db))
 	rpc.Handle(user.NewServer(db))
