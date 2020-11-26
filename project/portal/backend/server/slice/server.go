@@ -8,8 +8,6 @@ import (
 	"github.com/carefree/project/common/objectid"
 	"github.com/carefree/project/portal/datamodel/slice"
 	"github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	pb "github.com/carefree/api/project/portal/slice/v1"
 )
@@ -41,8 +39,7 @@ func (s *Server) CreateSlice(ctx context.Context, req *pb.CreateSliceRequest) (*
 		Bookmarks:  rs.Bookmarks,
 	}
 	slices := slice.New(s.db)
-	slices.Create(resp)
-	return resp, nil
+	return slices.Create(resp)
 }
 
 func (s *Server) UpdateSlice(ctx context.Context, req *pb.UpdateSliceRequest) (*pb.Slice, error) {
@@ -54,7 +51,7 @@ func (s *Server) UpdateSlice(ctx context.Context, req *pb.UpdateSliceRequest) (*
 	}
 	ns.Background = rs.Background
 	ns.Bookmarks = rs.Bookmarks
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSlice not implemented")
+	return slices.Update(ns)
 }
 
 func (s *Server) DeleteSlice(ctx context.Context, req *pb.DeleteSliceRequest) (*empty.Empty, error) {
@@ -67,9 +64,5 @@ func (s *Server) DeleteSlice(ctx context.Context, req *pb.DeleteSliceRequest) (*
 
 func (s *Server) GetSlice(ctx context.Context, req *pb.GetSliceRequest) (*pb.Slice, error) {
 	slices := slice.New(s.db)
-	rs, err := slices.Get(req.Name)
-	if err != nil {
-		return nil, err
-	}
-	return rs, nil
+	return slices.Get(req.Name)
 }

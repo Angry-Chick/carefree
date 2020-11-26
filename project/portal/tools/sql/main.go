@@ -15,11 +15,11 @@ func main() {
 	var cfg db.Config
 	yamlFile, err := ioutil.ReadFile("project/portal/cfg.yaml")
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 	err = yaml.Unmarshal(yamlFile, &cfg)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 	str := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", cfg.Username, cfg.Password, cfg.DBName)
 	dbs, err := gorm.Open("mysql", str)

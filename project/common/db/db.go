@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/carefree/project/common/resource"
-	"github.com/golang/protobuf/proto"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"google.golang.org/protobuf/proto"
 )
 
 type sql string
@@ -50,10 +50,6 @@ func (db *DB) Close() {
 	db.Close()
 }
 
-func (db *DB) Begin() *DB {
-	return &DB{db.DB.Begin()}
-}
-
 func (db *DB) Transaction(fc func(db *DB) error) (err error) {
 	panicked := true
 	tx := &DB{db.DB.Begin()}
@@ -71,13 +67,6 @@ func (db *DB) Transaction(fc func(db *DB) error) (err error) {
 	}
 	panicked = false
 	return
-}
-
-func (db *DB) Commit() error {
-	if err := db.DB.Commit().Error; err != nil {
-		return err
-	}
-	return nil
 }
 
 // Row indicates data stored in a resource table row.
@@ -101,13 +90,14 @@ func (db *DB) Get(name string) (*Row, error) {
 }
 
 func (db *DB) Create(r resource.Resource) (*Row, error) {
-	b, err := Marshal(r)
+	b, err := proto.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
+	// 不指定 id 默认自增长
 	row := &Row{
 		Name:     r.GetName(),
-		Type:     proto.MessageName(r),
+		Type:     string(r.ProtoReflect().Descriptor().FullName()),
 		Resource: b,
 	}
 	nd := db.DB.Create(row)
@@ -118,11 +108,15 @@ func (db *DB) Create(r resource.Resource) (*Row, error) {
 }
 
 func (db *DB) Update(r resource.Resource) (*Row, error) {
-	b, err := Marshal(r)
+	b, err := proto.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
-	nd := db.DB.Model(&Row{Name: r.GetName()}).Update("resource", b)
+	row, err := db.Get(r.GetName())
+	if err != nil {
+		return nil, err
+	}
+	nd := db.DB.Model(&Row{Model: gorm.Model{ID: row.ID}}).Updates(Row{Resource: b})
 	if nd.Error != nil {
 		return nil, err
 	}
@@ -130,11 +124,19 @@ func (db *DB) Update(r resource.Resource) (*Row, error) {
 }
 
 func (db *DB) Delete(name string) error {
-	return db.DB.Delete(&Row{Name: name}).Error
+	row, err := db.Get(name)
+	if err != nil {
+		return err
+	}
+	return db.DB.Delete(&Row{Model: gorm.Model{ID: row.ID}}).Error
 }
 
 func (db *DB) Purge(name string) error {
-	return db.DB.Unscoped().Delete(&Row{Name: name}).Error
+	row, err := db.Get(name)
+	if err != nil {
+		return err
+	}
+	return db.DB.Unscoped().Delete(&Row{Model: gorm.Model{ID: row.ID}}).Error
 }
 
 func getRow(db *gorm.DB) (*Row, error) {

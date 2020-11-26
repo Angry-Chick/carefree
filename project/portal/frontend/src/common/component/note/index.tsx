@@ -1,5 +1,6 @@
 import React from 'react'
-import {Menu, Dropdown} from 'antd'
+import { DragPanel } from "../drag_panel";
+import { Menu, Dropdown } from 'antd'
 
 export function Note(props: any) {
     const colorList = ['lightpink', 'coral', 'aliceblue', 'gold', '#C9A39C']
@@ -43,14 +44,16 @@ export function Note(props: any) {
         </Menu>
     )
     return (
-        <Dropdown overlay={menu} trigger={['contextMenu']}>
-            <div
-                className="cf-note-wrap"
-                contentEditable={editable}
-                style={{background: color}}
-            >
-                {props.content}
-            </div>
-        </Dropdown>
+        <DragPanel>
+            <Dropdown overlay={menu} trigger={['contextMenu']}>
+                <div
+                    className="cf-note-wrap"
+                    contentEditable={editable}
+                    style={{ background: color }}
+                >
+                    {props.content}
+                </div>
+            </Dropdown>
+        </DragPanel>
     )
 }

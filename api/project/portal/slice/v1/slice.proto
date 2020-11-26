@@ -19,7 +19,7 @@ message Slice{
         message location{
             int32 x=1;
             int32 y=2;
-            int32 weight=3;
+            int32 width=3;
             int32 height=4;
         }
         message item{

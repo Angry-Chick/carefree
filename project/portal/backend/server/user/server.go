@@ -38,11 +38,7 @@ func (s *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb
 
 func (s *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
 	rs := user.New(s.db)
-	n, err := rs.Get(req.Name)
-	if err != nil {
-		return nil, err
-	}
-	return n, nil
+	return rs.Get(req.Name)
 }
 
 func (s *Server) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*empty.Empty, error) {

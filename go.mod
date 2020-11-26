@@ -8,6 +8,7 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.16
+	github.com/nacos-group/nacos-sdk-go v1.0.1
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.25.0

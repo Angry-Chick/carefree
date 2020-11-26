@@ -1,6 +1,6 @@
-import { Layout, Menu, Breadcrumb, Avatar } from "antd";
+import { Layout, Menu, Avatar } from "antd";
 import React from "react";
-import { BookMarkList } from "../book_mark";
+import { Bookmark } from "../bookmark";
 import { DragPanel } from "../drag_panel";
 import { Note } from "../note";
 import { ToDo } from "../todo";
@@ -17,9 +17,6 @@ export function Sidebar(props: any) {
   }
   const todoProps: Array<valueProps> = [];
   const [todoList, setTodoList] = React.useState(todoProps);
-  const [bookMarkList, setBookMarkList] = React.useState<Array<sliceBookMark>>(
-    []
-  );
   const noteListProps: Array<valueProps> = [];
   const [noteList, setNoteList] = React.useState(noteListProps);
   const [slice, setSlice] = React.useState<sliceProps>({
@@ -31,15 +28,52 @@ export function Sidebar(props: any) {
     setCollapsed(collapsed);
   };
   React.useEffect(() => {
-    fetchSlice(props.user).then((res) => {
-      setSlice({
-        name: res.name,
-        background: res.background,
-        bookmarks: res.bookmarks,
+    fetchSlice(props.user)
+      .then((res) => {
+        setSlice({
+          name: res.name,
+          background: res.background,
+          bookmarks: res.bookmarks,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    });
   }, []);
 
+  const deleteBookmark = (index: number) => {
+    let li = [...slice.bookmarks!];
+    li.splice(index, 1);
+    updateSlice({
+      name: slice.name,
+      background: slice.background,
+      bookmarks: li,
+    });
+    setSlice({
+      name: slice.name,
+      background: slice.background,
+      bookmarks: li,
+    });
+  };
+  const saveBookmark = (index: number, bk: sliceBookMark) => {
+    let ns: sliceProps = slice;
+    ns.bookmarks![index] = bk
+    setSlice(ns)
+    updateSlice(ns)
+  };
+  const createBookmark = () => {
+    const newBK: sliceBookMark = {
+      title: Date.now().toString(),
+      loc: { x: 0, y: 0, width: 300, height: 300 },
+    };
+    const ns: sliceProps = {
+      name: slice.name,
+      background: slice.background,
+      bookmarks: slice.bookmarks ? [...slice.bookmarks, newBK] : [newBK],
+    };
+    updateSlice(ns);
+    setSlice(ns);
+  };
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -58,23 +92,7 @@ export function Sidebar(props: any) {
         </div>
         <Menu theme="light" mode="inline">
           <SubMenu key="sub1" title="书签">
-            <Menu.Item
-              key="1"
-              onClick={() => {
-                const newBK: sliceBookMark = {
-                  title: "",
-                  items: [],
-                  loc: { x: 0, y: 0, weight: 0, height: 0 },
-                };
-                console.log(slice);
-                updateSlice({
-                  name: slice.name,
-                  background: slice.background,
-                  bookmarks: [...bookMarkList, newBK],
-                });
-                setBookMarkList([...bookMarkList, newBK]);
-              }}
-            >
+            <Menu.Item key="1" onClick={createBookmark}>
               添加书签
             </Menu.Item>
           </SubMenu>
@@ -113,82 +131,79 @@ export function Sidebar(props: any) {
         </Menu>
       </Sider>
       <div>
-        {bookMarkList.map((v, i) => {
-          return (
-            <DragPanel width={300} height={300}>
-              <BookMarkList
-                delete={() => {
-                  let li = [...bookMarkList];
-                  li.splice(i, 1);
-                  setBookMarkList(li);
-                }}
+        {slice.bookmarks
+          ? slice.bookmarks.map((v, i) => {
+            return (
+              <Bookmark
+                key={v.title}
+                data={v}
+                index={i}
+                delete={deleteBookmark}
+                save={saveBookmark}
               />
-            </DragPanel>
-          );
-        })}
+            );
+          })
+          : ""}
         {noteList.map((v, i) => {
           return (
-            <DragPanel key={v.key} width={300} height={300}>
-              <Note
-                content={v.content}
-                delete={() => {
-                  let li = [...noteList];
-                  li.splice(i, 1);
-                  setNoteList(li);
-                }}
-              />
-            </DragPanel>
+            <Note
+              key={v.key}
+              content={v.content}
+              delete={() => {
+                let li = [...noteList];
+                li.splice(i, 1);
+                setNoteList(li);
+              }}
+            />
           );
         })}
         {todoList.map((v, i) => {
           return (
-            <DragPanel key={v.key} width={300} height={300}>
-              <ToDo
-                content={v.content}
-                delete={() => {
-                  let li = [...todoList];
-                  li.splice(i, 1);
-                  setTodoList(li);
-                }}
-              />
-            </DragPanel>
+            <ToDo
+              key={v.key}
+              content={v.content}
+              delete={() => {
+                let li = [...todoList];
+                li.splice(i, 1);
+                setTodoList(li);
+              }}
+            />
           );
         })}
       </div>
-    </Layout>
+    </Layout >
   );
 }
 
 interface sliceProps {
   name: string;
-  background: string;
-  bookmarks: Array<sliceBookMark>;
+  background?: string;
+  bookmarks?: Array<sliceBookMark>;
 }
 
-interface sliceBookMark {
+export interface sliceBookMark {
   title: string;
-  items: Array<bookMarkItem>;
+  items?: Array<bookMarkItem>;
   loc: sliceLocation;
 }
 
 interface sliceLocation {
   x: number;
   y: number;
-  weight: number;
+  width: number;
   height: number;
 }
 
-interface bookMarkItem {
+export interface bookMarkItem {
   title: string;
+  image?: string;
   link: string;
 }
 
-async function updateSlice(slice: sliceProps) {
+const updateSlice = (slice: sliceProps) =>
   axios
     .post("/api/carefree.project.portal.slice.v1.SliceService/UpdateSlice", {
-      name: slice.name,
-      background: slice.background,
-      bookmarks: slice.bookmarks,
+      slice: slice,
     })
     .then((res) => {
       return res.data;
@@ -196,7 +211,6 @@ async function updateSlice(slice: sliceProps) {
     .catch(function (error) {
       console.log(error);
     });
-}
 
 async function fetchSlice(userID: string) {
   try {

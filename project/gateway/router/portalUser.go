@@ -23,6 +23,7 @@ func (s *portalUserService) handle(ctx context.Context) (proto.Message, error) {
 		if err := protojson.Unmarshal(s.req, req); err != nil {
 			return nil, err
 		}
+
 		return s.cli.GetUser(ctx, req)
 	default:
 		return nil, errors.New("method not implemented")

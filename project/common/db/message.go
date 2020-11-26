@@ -4,40 +4,13 @@ package db
 // unmarshal from DB bytes.
 
 import (
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
 )
 
-// Marshal marshals a proto.Message to DB bytes.
 func Marshal(m proto.Message) ([]byte, error) {
-	a, err := ptypes.MarshalAny(m)
-	if err != nil {
-		return nil, err
-	}
-	return proto.Marshal(a)
+	return proto.Marshal(m)
 }
 
-// Unmarshal unmarshals DB bytes to the given proto.Message.
 func Unmarshal(b []byte, m proto.Message) error {
-	var a any.Any
-	if err := proto.Unmarshal(b, &a); err != nil {
-		return err
-	}
-	return ptypes.UnmarshalAny(&a, m)
-}
-
-// FromBytes unmarshals DB bytes to a arbitrary registered proto.Message type.
-// It's the caller's duty to type assert the returned proto.Message with desired
-// types.
-func FromBytes(b []byte) (proto.Message, error) {
-	var a any.Any
-	if err := proto.Unmarshal(b, &a); err != nil {
-		return nil, err
-	}
-	var da ptypes.DynamicAny
-	if err := ptypes.UnmarshalAny(&a, &da); err != nil {
-		return nil, err
-	}
-	return da.Message, nil
+	return proto.Unmarshal(b, m)
 }
