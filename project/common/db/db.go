@@ -34,7 +34,7 @@ func New(cfg *Config) (*DB, error) {
 	)
 	switch cfg.SQL {
 	case "mysql":
-		dsn := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", cfg.Username, cfg.Password, cfg.DBName)
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
 		db, err = gorm.Open("mysql", dsn)
 	default:
 		return nil, fmt.Errorf("don't support database %s", cfg.SQL)

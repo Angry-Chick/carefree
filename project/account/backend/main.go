@@ -27,6 +27,7 @@ var (
 func init() {
 	flag.IntVar(&hport, "hport", hport, "HTTP server port")
 	flag.IntVar(&rport, "rport", rport, "RPC server port")
+	flag.StringVar(&configEndpoint, "config_endpoint", configEndpoint, "config endpoint addr")
 	flag.StringVar(&configUsername, "config_username", configUsername, "config server username")
 	flag.StringVar(&configPassword, "config_password", configPassword, "config server password")
 }

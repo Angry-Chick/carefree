@@ -15,8 +15,8 @@ import (
 
 var (
 	port                   = 3001
-	homeServiceEndpoint    = "127.0.0.1:9090"
-	accountServiceEndpoint = "127.0.0.1:9091"
+	portalServiceEndpoint  = "http://120.53.107.78:9092"
+	accountServiceEndpoint = "http://120.53.107.78:9091"
 )
 
 func init() {
@@ -29,7 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	hcli, err := rpc.Dial(ctx, homeServiceEndpoint)
+	hcli, err := rpc.Dial(ctx, portalServiceEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}

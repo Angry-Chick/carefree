@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	hport = 8080
-	rport = 9090
+	hport = 8082
+	rport = 9092
 
 	serviceName     = "portal"
 	accountEndpoint = "http://127.0.0.1:9091"
@@ -31,6 +31,8 @@ var (
 func init() {
 	flag.IntVar(&hport, "hport", hport, "HTTP server port")
 	flag.IntVar(&rport, "rport", rport, "RPC server port")
+	flag.StringVar(&accountEndpoint, "account_endpoint", accountEndpoint, "account endpoint addr")
+	flag.StringVar(&configEndpoint, "config_endpoint", configEndpoint, "config endpoint addr")
 	flag.StringVar(&configUsername, "config_username", configUsername, "config server username")
 	flag.StringVar(&configPassword, "config_password", configPassword, "config server password")
 }
