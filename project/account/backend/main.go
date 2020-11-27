@@ -19,7 +19,7 @@ var (
 	rport = 9091
 
 	serviceName    = "account"
-	configEndpoint = "127.0.0.1:8848"
+	configEndpoint = "http://127.0.0.1:8848"
 	configUsername = "nacos"
 	configPassword = "nacos"
 )
