@@ -3,11 +3,10 @@ package account
 import (
 	"context"
 
-	"github.com/carefree/project/portal/datamodel/slice"
-
 	"github.com/carefree/net/rpc"
 	"github.com/carefree/project/common/db"
 	"github.com/carefree/project/common/objectid"
+	"github.com/carefree/project/portal/datamodel/slice"
 	"github.com/carefree/project/portal/datamodel/space"
 	"github.com/carefree/project/portal/datamodel/user"
 	"github.com/carefree/project/portal/integration/account"
@@ -40,10 +39,10 @@ func (s *Server) Register(svr *rpc.Server) {
 // TODO(ljy)
 func (s *Server) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.SignUpResponse, error) {
 	proc := &signUpProc{req: req}
-	if err := s.db.Transaction(proc.do); err != nil {
+	if _, err := s.userCli.CreateUser(ctx, req.Username, req.Password); err != nil {
 		return nil, err
 	}
-	if _, err := s.userCli.CreateUser(ctx, req.Username, req.Password); err != nil {
+	if err := s.db.Transaction(proc.do); err != nil {
 		return nil, err
 	}
 	return proc.resp, nil
