@@ -37,11 +37,11 @@ func (s *Server) Serve(hport, rport int) error {
 // Start starts HTTP server on localhost:hport, and gRPC server on
 // localhost:rport.
 func (s *Server) Start(hport, rport int) (err error) {
-	hln, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", hport))
+	hln, err := net.Listen("tcp", fmt.Sprintf(":%d", hport))
 	if err != nil {
 		return err
 	}
-	rln, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", rport))
+	rln, err := net.Listen("tcp", fmt.Sprintf(":%d", rport))
 	if err != nil {
 		return err
 	}

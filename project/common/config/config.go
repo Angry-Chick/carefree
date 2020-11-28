@@ -6,12 +6,15 @@ import (
 
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/model"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
 type Client struct {
-	config_client.IConfigClient
+	CC config_client.IConfigClient
+	NC naming_client.INamingClient
 }
 
 type Config struct {
@@ -51,19 +54,45 @@ func DefaultConfig(endpoint string, un string, pwd string) (*Config, error) {
 }
 
 func NewClient(cfg *Config) (*Client, error) {
-	cli, err := clients.CreateConfigClient(map[string]interface{}{
+	// 创建服务配置客户端
+	cc, err := clients.CreateConfigClient(map[string]interface{}{
 		"clientConfig":  cfg.cc,
 		"serverConfigs": cfg.sc,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &Client{cli}, err
+
+	// 创建服务发现客户端
+	nc, err := clients.CreateNamingClient(map[string]interface{}{
+		"clientConfig":  cfg.cc,
+		"serverConfigs": cfg.sc,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Client{CC: cc, NC: nc}, err
 }
 
 func (cli *Client) GetConfig(dataID string, group string) (string, error) {
-	return cli.IConfigClient.GetConfig(vo.ConfigParam{
+	return cli.CC.GetConfig(vo.ConfigParam{
 		DataId: dataID,
 		Group:  group,
 	})
+}
+
+func (cli *Client) GetService(service string, group string, cluster []string) (model.Service, error) {
+	s, err := cli.NC.GetService(vo.GetServiceParam{
+		ServiceName: service,
+		Clusters:    cluster, // default value is DEFAULT
+		GroupName:   group,   // default value is DEFAULT_GROUP
+	})
+	if err != nil {
+		return model.Service{}, err
+	}
+	return s, err
+}
+
+func (cli *Client) RegisterInstance(param vo.RegisterInstanceParam) (bool, error) {
+	return cli.NC.RegisterInstance(param)
 }

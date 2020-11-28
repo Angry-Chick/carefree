@@ -18,11 +18,11 @@ import (
 )
 
 var (
-	hport = 8082
-	rport = 9092
+	hport = 8080
+	rport = 9090
 
 	serviceName     = "portal"
-	accountEndpoint = "http://127.0.0.1:9091"
+	accountEndpoint = "127.0.0.1:9090"
 	configEndpoint  = "http://127.0.0.1:8848"
 	configUsername  = "nacos"
 	configPassword  = "nacos"

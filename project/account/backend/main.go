@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	hport = 8081
-	rport = 9091
+	hport = 8080
+	rport = 9090
 
 	serviceName    = "account"
 	configEndpoint = "http://127.0.0.1:8848"

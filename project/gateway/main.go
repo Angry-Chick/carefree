@@ -15,8 +15,8 @@ import (
 
 var (
 	port                   = 3001
-	portalServiceEndpoint  = "http://120.53.107.78:9092"
-	accountServiceEndpoint = "http://120.53.107.78:9091"
+	portalServiceEndpoint  = "http://localhost:9003"
+	accountServiceEndpoint = "http://localhost:9004"
 )
 
 func init() {
