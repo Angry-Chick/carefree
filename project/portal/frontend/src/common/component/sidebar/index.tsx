@@ -1,7 +1,6 @@
 import { Layout, Menu, Avatar } from "antd";
 import React from "react";
 import { Bookmark } from "../bookmark";
-import { DragPanel } from "../drag_panel";
 import { Note } from "../note";
 import { ToDo } from "../todo";
 import axios from "axios";
@@ -9,7 +8,11 @@ import axios from "axios";
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-export function Sidebar(props: any) {
+export interface SidebarProps {
+  user: string
+}
+
+export function Sidebar(props: SidebarProps) {
   const [collapsed, setCollapsed] = React.useState(true);
   interface valueProps {
     key: string;
