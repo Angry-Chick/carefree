@@ -11,3 +11,4 @@
   - gorm
 - nacos
 - mysql
+- docker
