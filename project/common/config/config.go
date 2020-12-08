@@ -63,7 +63,7 @@ func NewClient(cfg *Config) (*Client, error) {
 		return nil, err
 	}
 
-	// 创建服务发现客户端
+	// TODO(ljy): 服务发现和服务配置分离
 	nc, err := clients.CreateNamingClient(map[string]interface{}{
 		"clientConfig":  cfg.cc,
 		"serverConfigs": cfg.sc,

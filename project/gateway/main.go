@@ -21,9 +21,12 @@ var (
 
 func init() {
 	flag.IntVar(&port, "port", port, "HTTP server port")
+	flag.StringVar(&portalServiceEndpoint, "portal_endpoint", portalServiceEndpoint, "portal endpoint addr")
+	flag.StringVar(&accountServiceEndpoint, "account_endpoint", accountServiceEndpoint, "account endpoint addr")
 }
 
 func main() {
+	flag.Parse()
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatal(err)

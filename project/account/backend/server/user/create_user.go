@@ -26,7 +26,7 @@ func (p *createProc) do(db *db.DB) error {
 	users := user.New(db)
 	var err error
 	n := &pb.User{
-		// 未来使用单独的 user id
+		// TODO(ljy): 未来使用单独的 user id
 		Name:     user.FullName(p.req.User.Username),
 		Username: p.req.User.Username,
 		Password: p.req.User.Password,

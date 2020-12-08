@@ -50,6 +50,7 @@ func (db *DB) Close() {
 	db.Close()
 }
 
+// Transaction start a transaction to ensures that the operations performed in the function are atomic.
 func (db *DB) Transaction(fc func(db *DB) error) (err error) {
 	panicked := true
 	tx := &DB{db.DB.Begin()}

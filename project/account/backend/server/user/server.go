@@ -7,8 +7,6 @@ import (
 	"github.com/carefree/project/account/datamodel/user"
 	"github.com/carefree/project/common/db"
 	"github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	pb "github.com/carefree/api/project/account/user/v1"
 )
@@ -44,8 +42,4 @@ func (s *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User,
 		return nil, err
 	}
 	return n, nil
-}
-
-func (s *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
